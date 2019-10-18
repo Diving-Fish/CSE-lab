@@ -10,6 +10,11 @@
 #include "extent_client.h"
 #include <vector>
 
+typedef struct entry {
+  unsigned long long inum;
+  char *name;
+  uint name_length;
+} entry_t;
 
 class yfs_client {
   extent_client *ec;
@@ -45,6 +50,7 @@ class yfs_client {
 
   bool isfile(inum);
   bool isdir(inum);
+  bool issymlink(inum);
 
   int getfile(inum, fileinfo &);
   int getdir(inum, dirinfo &);
@@ -56,7 +62,9 @@ class yfs_client {
   int write(inum, size_t, off_t, const char *, size_t &);
   int read(inum, size_t, off_t, std::string &);
   int unlink(inum,const char *);
-  int mkdir(inum , const char *, mode_t , inum &);
+  int mkdir(inum, const char *, mode_t , inum &);
+  int readlink(inum, std::string &);
+  int symlink(inum, const char *, const char *, inum &);
   
   /** you may need to add symbolic link related methods here.*/
 };

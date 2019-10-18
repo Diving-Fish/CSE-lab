@@ -36,6 +36,7 @@ class block_manager {
  private:
   disk *d;
   std::map <uint32_t, int> using_blocks;
+  blockid_t next_block;
  public:
   block_manager();
   struct superblock sb;
@@ -67,6 +68,8 @@ class block_manager {
 #define NINDIRECT (BLOCK_SIZE / sizeof(uint))
 #define MAXFILE (NDIRECT + NINDIRECT)
 
+#define NBLOCKS(size) ((size - 1) / BLOCK_SIZE + 1)
+
 typedef struct inode {
   short type;
   unsigned int size;
@@ -90,6 +93,8 @@ class inode_manager {
   void write_file(uint32_t inum, const char *buf, int size);
   void remove_file(uint32_t inum);
   void getattr(uint32_t inum, extent_protocol::attr &a);
+  blockid_t get_block_id(inode_t *node, int index);
+  void set_block_id(inode_t *node, int index, blockid_t id);
 };
 
 #endif
