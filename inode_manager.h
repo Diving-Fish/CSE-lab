@@ -21,7 +21,7 @@ class disk {
  public:
   disk();
   void read_block(uint32_t id, char *buf);
-  void write_block(uint32_t id, const char *buf);
+  void write_block(uint32_t id, const char *buf, int size);
 };
 
 // block layer -----------------------------------------
@@ -44,7 +44,7 @@ class block_manager {
   uint32_t alloc_block();
   void free_block(uint32_t id);
   void read_block(uint32_t id, char *buf);
-  void write_block(uint32_t id, const char *buf);
+  void write_block(uint32_t id, const char *buf, int size);
 };
 
 // inode layer -----------------------------------------
@@ -81,6 +81,7 @@ typedef struct inode {
 
 class inode_manager {
  private:
+  uint32_t next_inum;
   block_manager *bm;
   struct inode* get_inode(uint32_t inum);
   void put_inode(uint32_t inum, struct inode *ino);

@@ -10,9 +10,11 @@
 #include "extent_client.h"
 #include <vector>
 
+#define MAX_LENGTH 64
+
 typedef struct entry {
   unsigned long long inum;
-  char *name;
+  char name[MAX_LENGTH];
   uint name_length;
 } entry_t;
 
@@ -44,6 +46,8 @@ class yfs_client {
  private:
   static std::string filename(inum);
   static inum n2i(std::string);
+  int __lookup(inum, const char *, bool &, inum &);
+  int __readdir(inum, std::list<entry_t> &);
 
  public:
   yfs_client(std::string, std::string);
