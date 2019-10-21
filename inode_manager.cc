@@ -19,14 +19,12 @@ disk::read_block(blockid_t id, char *buf)
 void
 disk::write_block(blockid_t id, const char *buf, int size)
 {
-  printf("\t  bm: writing block %u\n", id);
   if (id < 0 || id >= BLOCK_NUM || buf == NULL) {
     printf("error occured.\n");
     return;
   }
   memset(blocks[id], 0, size);
   memcpy(blocks[id], buf, size);
-  printf("\t  bm: written block %u\n", id);
 }
 
 // block layer -----------------------------------------
@@ -331,9 +329,8 @@ inode_manager::get_block_id(inode_t *node, int index) {
     blockid_t id = node->blocks[NDIRECT];
     char block_buf[BLOCK_SIZE];
     bm->read_block(id, block_buf);
-    blockid_t *block_ptr = (blockid_t *)block_buf;
-    block_ptr += index - NDIRECT;
-    return *block_ptr;
+    blockid_t *block_ptr = (blockid_t *) block_buf;
+    return block_ptr[index - NDIRECT];
   }
   return node->blocks[index];
 }
@@ -346,9 +343,10 @@ inode_manager::set_block_id(inode_t *node, int index, blockid_t id) {
     }
     char block_buf[BLOCK_SIZE];
     bm->read_block(node->blocks[NDIRECT], block_buf);
-    blockid_t *block_ptr = (blockid_t *) (block_buf + sizeof(blockid_t) * (index - NDIRECT));
-    *block_ptr = id;
+    blockid_t *block_ptr = (blockid_t *) block_buf;
+    block_ptr[index - NDIRECT] = id;
     bm->write_block(node->blocks[NDIRECT], block_buf);
+  } else {
+    node->blocks[index] = id;
   }
-  node->blocks[index] = id;
 }

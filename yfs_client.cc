@@ -363,14 +363,10 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
      * when off > length of original file, fill the holes with '\0'.
      */
     std::string buf;
-    printf("1");
     lc->acquire(ino);
-    printf("2");
     ec->get(ino, buf);
-    printf("3");
     std::string str;
     str.assign(data, size);
-    printf("4");
     if ((uint) off <= buf.size()) {
         buf.replace(off, size, str);
         bytes_written = size;
@@ -380,11 +376,8 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
         buf.replace(off, size, str);
         bytes_written = size + off - old_size;
     }
-    printf("5");
     ec->put(ino, buf);
-    printf("6");
     lc->release(ino);
-    printf("7");
     return r;
 }
 
