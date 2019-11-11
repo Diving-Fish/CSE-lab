@@ -4,12 +4,19 @@
 #include <string>
 
 #include "lock_protocol.h"
-#include "lock_client.h"
+#include "lock_client_cache.h"
 
 //#include "yfs_protocol.h"
 #include "extent_client.h"
 #include <vector>
 
+#define MAX_LENGTH 64
+
+typedef struct entry {
+  unsigned long long inum;
+  char name[MAX_LENGTH];
+  uint name_length;
+} entry_t;
 
 class yfs_client {
   extent_client *ec;
@@ -39,12 +46,15 @@ class yfs_client {
  private:
   static std::string filename(inum);
   static inum n2i(std::string);
+  int __lookup(inum, const char *, bool &, inum &);
+  int __readdir(inum, std::list<entry_t> &);
 
  public:
   yfs_client(std::string, std::string);
 
   bool isfile(inum);
   bool isdir(inum);
+  bool issymlink(inum);
 
   int getfile(inum, fileinfo &);
   int getdir(inum, dirinfo &);
@@ -56,7 +66,9 @@ class yfs_client {
   int write(inum, size_t, off_t, const char *, size_t &);
   int read(inum, size_t, off_t, std::string &);
   int unlink(inum,const char *);
-  int mkdir(inum , const char *, mode_t , inum &);
+  int mkdir(inum, const char *, mode_t , inum &);
+  int readlink(inum, std::string &);
+  int symlink(inum, const char *, const char *, inum &);
   
   /** you may need to add symbolic link related methods here.*/
 };
