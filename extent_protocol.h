@@ -5,6 +5,17 @@
 
 #include "rpc.h"
 
+class rextent_protocol {
+  public:
+    enum xxstatus { OK, RPCERR };
+    typedef int status;
+    enum rpc_numbers {
+      flush = 0x9001,
+      clear,
+      sync_meta,
+    };
+};
+
 class extent_protocol {
  public:
   typedef int status;
@@ -14,12 +25,14 @@ class extent_protocol {
     put = 0x6001,
     get,
     getattr,
-    remove
+    remove,
+    create
   };
 
   enum types {
     T_DIR = 1,
-    T_FILE
+    T_FILE,
+    T_SYMLINK
   };
 
   struct attr {

@@ -21,7 +21,7 @@ class disk {
  public:
   disk();
   void read_block(uint32_t id, char *buf);
-  void write_block(uint32_t id, const char *buf);
+  void write_block(uint32_t id, const char *buf, int size);
 };
 
 // block layer -----------------------------------------
@@ -36,6 +36,7 @@ class block_manager {
  private:
   disk *d;
   std::map <uint32_t, int> using_blocks;
+  blockid_t next_block;
  public:
   block_manager();
   struct superblock sb;
@@ -43,7 +44,7 @@ class block_manager {
   uint32_t alloc_block();
   void free_block(uint32_t id);
   void read_block(uint32_t id, char *buf);
-  void write_block(uint32_t id, const char *buf);
+  void write_block(uint32_t id, const char *buf, int size);
 };
 
 // inode layer -----------------------------------------
@@ -67,6 +68,8 @@ class block_manager {
 #define NINDIRECT (BLOCK_SIZE / sizeof(uint))
 #define MAXFILE (NDIRECT + NINDIRECT)
 
+#define NBLOCKS(size) ((size - 1) / BLOCK_SIZE + 1)
+
 typedef struct inode {
   short type;
   unsigned int size;
@@ -78,6 +81,7 @@ typedef struct inode {
 
 class inode_manager {
  private:
+  uint32_t next_inum;
   block_manager *bm;
   struct inode* get_inode(uint32_t inum);
   void put_inode(uint32_t inum, struct inode *ino);
@@ -90,6 +94,8 @@ class inode_manager {
   void write_file(uint32_t inum, const char *buf, int size);
   void remove_file(uint32_t inum);
   void getattr(uint32_t inum, extent_protocol::attr &a);
+  blockid_t get_block_id(inode_t *node, int index);
+  void set_block_id(inode_t *node, int index, blockid_t id);
 };
 
 #endif
