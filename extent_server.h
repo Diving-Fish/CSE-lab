@@ -18,15 +18,16 @@ class extent_server {
   std::map <extent_protocol::extentid_t, extent_t> extents;
 #endif
   inode_manager *im;
+  std::map<extent_protocol::extentid_t, std::string> owner_map;
 
  public:
   extent_server();
 
-  int create(uint32_t type, extent_protocol::extentid_t &id);
-  int put(extent_protocol::extentid_t id, std::string, int &);
-  int get(extent_protocol::extentid_t id, std::string &);
-  int getattr(extent_protocol::extentid_t id, extent_protocol::attr &);
-  int remove(extent_protocol::extentid_t id, int &);
+  int create(std::string cid, uint32_t type, extent_protocol::extentid_t &id);
+  int put(std::string cid, extent_protocol::extentid_t id, std::string, int &);
+  int get(std::string cid, extent_protocol::extentid_t id, std::string &);
+  int getattr(std::string cid, extent_protocol::extentid_t id, extent_protocol::attr &);
+  int remove(std::string cid, extent_protocol::extentid_t id, int &);
 };
 
 #endif 

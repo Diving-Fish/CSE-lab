@@ -14,6 +14,7 @@ yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
   ec = new extent_client(extent_dst);
   lc = new lock_client_cache(lock_dst);
   lc->acquire(1);
+  std::string buf;
   if (ec->put(1, "") != extent_protocol::OK)
       printf("error init root dir\n"); // XYB: init root dir
   lc->release(1);
@@ -377,6 +378,7 @@ yfs_client::write(inum ino, size_t size, off_t off, const char *data,
         bytes_written = size + off - old_size;
     }
     ec->put(ino, buf);
+    //ec->flush(ino);
     lc->release(ino);
     return r;
 }

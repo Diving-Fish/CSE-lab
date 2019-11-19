@@ -176,6 +176,7 @@ fuseserver_read(fuse_req_t req, fuse_ino_t ino, size_t size,
     // Change the above "#if 0" to "#if 1", and your code goes here
     int r;
     if ((r = yfs->read(ino, size, off, buf)) == yfs_client::OK) {
+        std::cout << buf << std::endl;
         fuse_reply_buf(req, buf.data(), buf.size());    
     } else {
         fuse_reply_err(req, ENOENT);

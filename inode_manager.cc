@@ -255,11 +255,9 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
    */
   printf("  im: writefile %u\n", inum);
   inode_t *node = get_inode(inum);
-  printf("1\n");
   int old_blocks = node->size == 0 ? 0 : NBLOCKS(node->size);
   int new_blocks = size == 0 ? 0 : NBLOCKS(size);
   node->size = size;
-  printf("2\n");
   if (old_blocks < new_blocks) {
     for (int index = 0; index < new_blocks - old_blocks; index++) {
       blockid_t id = bm->alloc_block();
@@ -270,20 +268,15 @@ inode_manager::write_file(uint32_t inum, const char *buf, int size)
       bm->free_block(get_block_id(node, new_blocks + index));
     }
   }
-  printf("3\n");
   for (int index = 0; index < new_blocks; index++) {
     int bsize = (index == new_blocks - 1) ? (size - index * BLOCK_SIZE) : BLOCK_SIZE;
     bm->write_block(get_block_id(node, index), buf + BLOCK_SIZE * index, bsize);
   }
-  printf("4\n");
   node->atime = (uint) time(0);
   node->mtime = (uint) time(0);
   node->ctime = (uint) time(0);
-  printf("5\n");
   put_inode(inum, node);
-  printf("6\n");
   free(node);
-  printf("7\n");
   return;
 }
 
